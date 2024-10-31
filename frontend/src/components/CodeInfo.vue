@@ -1,0 +1,110 @@
+<template>
+
+    <v-card outlined>
+        <v-card-title>
+            CodeInfo
+        </v-card-title>
+
+        <v-card-text>
+            <String label="codeCategory" v-model="value.CodeCategory" :editMode="editMode"/>
+            <String label="code" v-model="value.Code" :editMode="editMode"/>
+            <String label="codeName" v-model="value.CodeName" :editMode="editMode"/>
+            <String label="settlementType" v-model="value.SettlementType" :editMode="editMode"/>
+            <String label="remarks" v-model="value.Remarks" :editMode="editMode"/>
+        </v-card-text>
+
+        <v-card-actions v-if="inList">
+            <slot name="actions"></slot>
+        </v-card-actions>
+    </v-card>
+</template>
+
+<script>
+
+    export default {
+        name: 'CodeInfo',
+        components:{},
+        props: {
+            value: [Object, String, Number, Boolean, Array],
+            editMode: Boolean,
+            isNew: Boolean,
+            offline: Boolean,
+            inList: Boolean,
+            label: String,
+        },
+        data: () => ({
+        }),
+        async created() {
+            if(!Object.values(this.value)[0]) {
+                this.$emit('input', {});
+                this.newValue = {
+                    'CodeCategory': '',
+                    'Code': '',
+                    'CodeName': '',
+                    'SettlementType': '',
+                    'Remarks': '',
+                }
+            }
+            if(typeof this.value === 'object') {
+                if(!('CodeCategory' in this.value)) {
+                    this.value.CodeCategory = '';
+                }
+            }
+            if(typeof this.value === 'object') {
+                if(!('Code' in this.value)) {
+                    this.value.Code = '';
+                }
+            }
+            if(typeof this.value === 'object') {
+                if(!('CodeName' in this.value)) {
+                    this.value.CodeName = '';
+                }
+            }
+            if(typeof this.value === 'object') {
+                if(!('SettlementType' in this.value)) {
+                    this.value.SettlementType = '';
+                }
+            }
+            if(typeof this.value === 'object') {
+                if(!('Remarks' in this.value)) {
+                    this.value.Remarks = '';
+                }
+            }
+        },
+        watch: {
+            value(val) {
+                this.$emit('input', val);
+            },
+            newValue(val) {
+                this.$emit('input', val);
+            },
+        },
+
+        methods: {
+            edit() {
+                this.editMode = true;
+            },
+            async add() {
+                this.editMode = false;
+                this.$emit('input', this.value);
+
+                if(this.isNew){
+                    this.$emit('add', this.value);
+                } else {
+                    this.$emit('edit', this.value);
+                }
+            },
+            async remove(){
+                this.editMode = false;
+                this.isDeleted = true;
+
+                this.$emit('input', this.value);
+                this.$emit('delete', this.value);
+            },
+            change(){
+                this.$emit('change', this.value);
+            },
+        }
+    }
+</script>
+
